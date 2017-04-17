@@ -1,21 +1,16 @@
 import numpy as np
 from PIL import Image
 from os import path
+from scipy.misc import imread
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import matplotlib.pyplot as plt
 import random
 import os
 
-from wordcloud import WordCloud, STOPWORDS
-
-
-font=os.path.join(os.path.dirname(__file__), "DroidSansFallbackFull.ttf")
-
-def grey_color_func(word, font_size, position, orientation, random_state=None, **kwargs):
-    return "hsl(0, 0%%, %d%%)" % random.randint(80, 100)
-
 if __name__ == "__main__":
     d = path.dirname(__file__)
-    mask = np.array(Image.open(path.join(d, "template.png")))
+    mask = imread(path.join(d, "template.png"))
+    font = os.path.join(d, "simhei.ttf")
     text = open("人民的名义.txt").read()
 
     # preprocessing the text a little bit
@@ -30,16 +25,11 @@ if __name__ == "__main__":
         for x in words:
             stopwords.add(x.rstrip())
 
-    wc = WordCloud(font_path=font,max_words=1000, mask=mask, stopwords=stopwords, margin=10,
-                   random_state=1).generate(text)
-    # store default colored image
-    default_colors = wc.to_array()
+    wc = WordCloud(font_path=font, background_color="black", max_words=2000, mask=mask, stopwords=stopwords, margin=10,
+                   random_state=42).generate(text)
+    # recolor wordcloud and show
     plt.title("Custom colors")
-    plt.imshow(wc.recolor(color_func=grey_color_func, random_state=3))
-    wc.to_file("a_new_hope.png")
-    plt.axis("off")
-    plt.figure()
-    plt.title(u"人民的名义")
-    plt.imshow(default_colors)
+    plt.imshow(wc.recolor(color_func=ImageColorGenerator(mask), random_state=3))
+    wc.to_file("wordcloud.png")
     plt.axis("off")
     plt.show()
