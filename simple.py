@@ -14,9 +14,8 @@ if __name__ == "__main__":
     text = open("人民的名义.txt").read()
 
     # preprocessing the text a little bit
-    text = text.replace("侯亮平", u"亮平")
-    text = text.replace("说", "")
-    text = text.replace("啊", "")
+    text = text.replace("侯亮平", u"亮平").replace("亮平", u"候亮平")
+    text = text.replace("说", "").replace("啊", "")
 
     # adding specific stopwords
     stopwords = set(STOPWORDS)
